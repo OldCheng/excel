@@ -2,6 +2,7 @@ package com.example.excel.service.impl;
 
 import com.example.excel.dao.StudentDao;
 import com.example.excel.enetity.Student;
+import com.example.excel.service.StudentService;
 import com.example.excel.utility.ImportTask;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.concurrent.*;
 
 @Service
-public class StudentServiceImpl implements StudentService{
+public class StudentServiceImpl implements StudentService {
 
     @Autowired
     private StudentDao studentDao;
@@ -85,7 +86,7 @@ public class StudentServiceImpl implements StudentService{
         int rows = rowCount - 1;
         //一个线程让他处理200个row,也许可以处理更多吧
         //int threadNum = rows/1000 + 1; //线程数量
-        int threadNum = 8 + 1; //线程数量
+        int threadNum = 8 + 1; //线程数量  cpu 核shu：cup-core+1  或两倍的 cup-core
         //设置一个倒计时门闩，用来处理主线程等待蚂蚁线程执行完成工作之后再运行
         CountDownLatch countDownLatch = new CountDownLatch(threadNum);
         //创建一个定长的线程池

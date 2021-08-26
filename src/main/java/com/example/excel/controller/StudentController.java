@@ -2,7 +2,7 @@ package com.example.excel.controller;
 
 import com.example.excel.common.JsonResult;
 import com.example.excel.enetity.Student;
-import com.example.excel.service.impl.StudentService;
+import com.example.excel.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +29,7 @@ public class StudentController {
     }
 
     /**
-     * 根据ID查询用户
+     * 根据ID查询学生
      * @param id
      * @return
      */
@@ -71,8 +71,6 @@ public class StudentController {
      * 添加学生
      * @param student
      * @return
-     * @requestBody注解常用来处理content-type不是默认的application/x-www-form-urlcoded编码的内容，
-     * 比如说：application/json或者是application/xml等。一般情况下来说常用其来处理application/json类型。
      */
     @PostMapping(value = "/student")
     public ResponseEntity<JsonResult> add (@RequestBody Student student){
@@ -171,11 +169,11 @@ public class StudentController {
         return "success："+ result+"  耗时" +time+ " 毫秒"+ " -- " + (time/1000) + " 秒";
     }
 
-    @PostMapping(path = "/import/thread/a", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void importStudentThreadA(
-            @RequestParam("file") MultipartFile multipartFile)
-            throws Exception {
-        studentService.readData(multipartFile);
-    }
+//    @PostMapping(path = "/import/thread/a", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    public void importStudentThreadA(
+//            @RequestParam("file") MultipartFile multipartFile)
+//            throws Exception {
+//        studentService.readData(multipartFile);
+//    }
 
 }

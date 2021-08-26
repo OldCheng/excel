@@ -1,4 +1,4 @@
-package com.example.excel.controller;
+package com.example.excel.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
