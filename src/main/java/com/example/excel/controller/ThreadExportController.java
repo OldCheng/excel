@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.*;
 
+/**
+ * 造数据
+ */
+
 @RestController
 public class ThreadExportController {
 
@@ -17,6 +21,14 @@ public class ThreadExportController {
         return "hello word!";
     }
 
+
+    /**
+     * 根据项目根目录下模版students.xlsx
+     * 制造数据 传需要造数据的数量
+     * @param count
+     * @return
+     * @throws IOException
+     */
     @GetMapping(value = "/create/data")
     public String data(@RequestParam("count") int count) throws IOException {
         long begin = System.currentTimeMillis();
