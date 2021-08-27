@@ -2,6 +2,7 @@ package com.example.excel.service.impl;
 
 import com.example.excel.dao.StudentDao;
 import com.example.excel.enetity.Student;
+import com.example.excel.service.AsyncService;
 import com.example.excel.service.StudentService;
 import com.example.excel.utility.ImportTask;
 import org.apache.poi.ss.usermodel.Cell;
@@ -23,11 +24,22 @@ import java.util.concurrent.*;
 @Service
 public class StudentServiceImpl implements StudentService {
 
+
+    public static int dataCount = 0;
+
+    public static synchronized void writer() { //1
+        dataCount++;
+    }
+
+    public static synchronized int read() { //1
+        return dataCount;
+    }
+
     @Autowired
     private StudentDao studentDao;
 
     @Autowired
-    private ApplicationContext applicationContext;
+    private AsyncService asyncService;
 
     @Override
     public Student getStudentById(Integer id) {
@@ -126,33 +138,36 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public void readData(MultipartFile multipartFile) throws Exception{
+    public String importStudentThreadAsync(MultipartFile multipartFile) throws Exception{
+        dataCount = 0;
         System.out.println(Thread.currentThread().getName()+"----------------"+Thread.currentThread().getId());
         XSSFWorkbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
         Sheet sheet = workbook.getSheetAt(0);
         int rowCount = sheet.getPhysicalNumberOfRows(); //获取总行数
-        int count = 0;
-        int startIndex = 1;
-        int endIndex = rowCount;
-        for(int i = startIndex; i <= endIndex; i++){
-            Student student = new Student();
-            Row row = sheet.getRow(i);
-            Cell cell0 = row.getCell(0);
-            Cell cell1 = row.getCell(1);
-            String name = cell0.getStringCellValue();
-            String company = cell1.getStringCellValue();
-            student.setName(name);
-            student.setCompany(company);
-            student.setDate(new Date());
+        //第一行是表头，实际行数要减1
+        int rows = rowCount - 1;
+        //一个线程让他处理200个row,也许可以处理更多吧
+        //int threadNum = rows/1000 + 1; //线程数量
+        int threadNum = 15 + 1; //线程数量  cpu 核shu：cup-core+1  或两倍的 cup-core
+        //设置一个倒计时门闩，用来处理主线程等待蚂蚁线程执行完成工作之后再运行
+        CountDownLatch countDownLatch = new CountDownLatch(threadNum);
 
+        int handleCount = threadHandleCount(rowCount);
+
+        int successCount = 0;
+        for(int i = 1; i <= threadNum; i++){
+            int startRow = (i-1) * handleCount +1;
+            int endRow = i * handleCount;
+            if(i == threadNum){
+                endRow = rows;
+            }
+            //使用spring管理的线程池
+            asyncService.insertImportData(workbook, startRow, endRow,this,countDownLatch);
         }
-
+        countDownLatch.await();
+        //countDownLatch.await(60,TimeUnit.SECONDS);
+        String result = "总行数："+rows+"  开起的线程数量："+threadNum+ " 导入成功的条数："+read();
+        return result;
     }
 
-    @Async
-    public void importExcel(Student student) throws Exception{
-        System.out.println(Thread.currentThread().getName()+"********************"+Thread.currentThread().getId());
-        studentDao.add(student);
-
-    }
 }

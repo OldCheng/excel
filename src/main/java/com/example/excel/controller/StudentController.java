@@ -169,11 +169,18 @@ public class StudentController {
         return "success："+ result+"  耗时" +time+ " 毫秒"+ " -- " + (time/1000) + " 秒";
     }
 
-//    @PostMapping(path = "/import/thread/a", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//    public void importStudentThreadA(
-//            @RequestParam("file") MultipartFile multipartFile)
-//            throws Exception {
-//        studentService.readData(multipartFile);
-//    }
+    @PostMapping(path = "/import/thread/async", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public String importStudentThreadAsync(
+            @RequestParam("file") MultipartFile multipartFile)
+            throws Exception {
+        long begin = System.currentTimeMillis();
+        String result ="";
+        try {
+            result = studentService.importStudentThreadAsync(multipartFile);
+        }catch (Exception e){}
+        long end = System.currentTimeMillis();
+        long time = end - begin;
+        return "success："+ result+"  耗时" +time+ " 毫秒"+ " -- " + (time/1000) + " 秒";
+    }
 
 }

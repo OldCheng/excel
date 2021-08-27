@@ -21,7 +21,7 @@ public interface StudentService {
 
     public String importStudent(MultipartFile multipartFile) throws IOException;
 
-    void readData(MultipartFile multipartFile) throws Exception;
+    String importStudentThreadAsync(MultipartFile multipartFile) throws Exception;
 
     String importStudentThread(MultipartFile multipartFile) throws IOException, ExecutionException, InterruptedException;
 }

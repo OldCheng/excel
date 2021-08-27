@@ -17,11 +17,11 @@ public class ExecutorConfig {
     public Executor asyncServiceExecutor() throws Exception{
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         //配置核心线程数
-        executor.setCorePoolSize(10);
+        executor.setCorePoolSize(16);
         //配置最大线程数
-        executor.setMaxPoolSize(100);
+        executor.setMaxPoolSize(20);
         //配置队列大小
-        executor.setQueueCapacity(1000);
+        executor.setQueueCapacity(20);
         //配置线程池中的线程的名称前缀
         executor.setThreadNamePrefix("async-service-");
 
