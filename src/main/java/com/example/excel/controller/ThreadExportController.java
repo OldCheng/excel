@@ -33,7 +33,7 @@ public class ThreadExportController {
     public String data(@RequestParam("count") int count) throws IOException {
         long begin = System.currentTimeMillis();
 
-        String filePath ="/Volumes/myproject/demo13/students.xlsx";
+        String filePath ="/Volumes/myproject/excel/students.xlsx";
         File file = new File(filePath);
         FileInputStream in =new FileInputStream(file);
         //读取excel模板

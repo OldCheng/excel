@@ -16,7 +16,7 @@ public class ExcelController {
 
     @GetMapping("/data")
     public static String insert(@RequestParam("count") int count) throws IOException {
-        String filePath ="/Volumes/myproject/demo13/BulkUploadTemplate.73de0a5e.xlsx";
+        String filePath ="/Volumes/myproject/excel/BulkUploadTemplate.73de0a5e.xlsx";
         File file = new File(filePath);
         FileInputStream in =new FileInputStream(file);
         //读取excel模板
