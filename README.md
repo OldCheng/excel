@@ -10,3 +10,6 @@
 
 5: StudentController 中 /import/thread/async 开启多线程导入，使用spring管理的线程池
 在 config目录下的ExecutorConfig配置
+
+
+spring管理的线程池 参考这篇文章 https://segmentfault.com/a/1190000016345113
