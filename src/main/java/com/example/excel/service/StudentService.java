@@ -1,9 +1,12 @@
 package com.example.excel.service;
 
+import com.example.excel.enetity.ImgParam;
 import com.example.excel.enetity.Student;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -24,4 +27,8 @@ public interface StudentService {
     String importStudentThreadAsync(MultipartFile multipartFile) throws Exception;
 
     String importStudentThread(MultipartFile multipartFile) throws IOException, ExecutionException, InterruptedException;
+
+    void exportPdf(HttpServletResponse response) throws UnsupportedEncodingException;
+
+    void imgExportPdf(ImgParam imgParam, HttpServletResponse response) throws IOException;
 }

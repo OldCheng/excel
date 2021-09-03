@@ -1,6 +1,7 @@
 package com.example.excel.controller;
 
 import com.example.excel.common.JsonResult;
+import com.example.excel.enetity.ImgParam;
 import com.example.excel.enetity.Student;
 import com.example.excel.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -181,6 +183,20 @@ public class StudentController {
         long end = System.currentTimeMillis();
         long time = end - begin;
         return "success："+ result+"  耗时" +time+ " 毫秒"+ " -- " + (time/1000) + " 秒";
+    }
+
+    @GetMapping(path = "/export/pdf")
+    public String exportPdf(HttpServletResponse response)
+            throws Exception {
+        studentService.exportPdf(response);
+        return null;
+    }
+
+    @PostMapping(path = "/imgExport/pdf")
+    public String imgExportPdf(@RequestBody ImgParam imgParam, HttpServletResponse response)
+            throws Exception {
+        studentService.imgExportPdf(imgParam, response);
+        return null;
     }
 
 }

@@ -1,10 +1,18 @@
 package com.example.excel.service.impl;
 
 import com.example.excel.dao.StudentDao;
+import com.example.excel.enetity.ImgParam;
 import com.example.excel.enetity.Student;
 import com.example.excel.service.AsyncService;
 import com.example.excel.service.StudentService;
 import com.example.excel.utility.ImportTask;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfAcroForm;
+import com.itextpdf.text.pdf.PdfWriter;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -15,8 +23,12 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.*;
@@ -132,6 +144,99 @@ public class StudentServiceImpl implements StudentService {
         return result;
     }
 
+    @Override
+    public void exportPdf(HttpServletResponse response) throws UnsupportedEncodingException {
+        String fileName = new Date().getTime()+"aaa.pdf"; // 设置response方式,使执行此controller时候自动出现下载页面,而非直接使用excel打开
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition","filename=" + new String(fileName.getBytes(), "iso8859-1"));
+//        response.setHeader("Content-Disposition","attachment;filename=" + new String(fileName.getBytes(), "iso8859-1"));
+        BaseFont bf;
+        Font font = null;
+        Font font2 = null;
+        try {
+
+            bf = BaseFont.createFont("STSong-Light", "UniGB-UCS2-H",
+                    BaseFont.NOT_EMBEDDED);//创建字体
+            font = new Font(bf, 12);//使用字体
+            font2 = new Font(bf, 12, Font.BOLD);//使用字体
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Document document = new Document();
+        try {
+//            PdfWriter.getInstance(document, new FileOutputStream("aaa.pdf"));
+            FileOutputStream fileOutputStream = new FileOutputStream("aaa.pdf");
+            PdfWriter instance = PdfWriter.getInstance(document, response.getOutputStream());
+            document.open();
+            Paragraph elements = new Paragraph("常州武进1区飞行报告", font2);
+            elements.setAlignment(Paragraph.ALIGN_CENTER);
+            document.add(elements);
+            Image png = Image.getInstance("/Volumes/myproject/excel/pdf.jpeg");
+//            Image png = Image.getInstance("https://imgproxy.dev.platform.michaels.com/XXTpt9MjeIKtJwhEo-W6WCFk1c9-K_Ll4qb5g7o5vco/aHR0cHM6Ly9zdG9yYWdlLmdvb2dsZWFwaXMuY29tL2Ntcy1mZ20tZGV2MDAvNTM2MjgzMzM2NDIyNTc2MTI4MA.png");
+            png.setAlignment(Image.ALIGN_CENTER);
+            document.add(png);
+            document.add(new Paragraph("任务编号：20190701        开始日期：20190701", font));
+            document.add(new Paragraph("任务名称：常州武进1区     结束日期：20190701", font));
+            document.add(new Paragraph("平均飞行高度：100m        平均飞行速度：100km/h", font));
+            document.add(new Paragraph("任务面积：1000㎡      结束日期：20190701", font));
+            document.add(new Paragraph("飞行总时长：1000㎡", font));
+            document.addCreationDate();
+            document.close();
+        } catch (Exception e) {
+            System.out.println("file create exception");
+        }
+    }
+
+    @Override
+    public void imgExportPdf(ImgParam imgParam, HttpServletResponse response) throws IOException {
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition","filename=" + new String("cccasd.pdf".getBytes(), "iso8859-1"));
+
+        String replace = imgParam.getImgCode().replace("data:image/jpeg;base64,", "");
+        // 解码
+        byte[] b = Base64.getDecoder().decode(replace);
+        BaseFont bf;
+        Font font = null;
+        Font font2 = null;
+        try {
+
+            bf = BaseFont.createFont("STSong-Light", "UniGB-UCS2-H",
+                    BaseFont.NOT_EMBEDDED);//创建字体
+            font = new Font(bf, 12);//使用字体
+            font2 = new Font(bf, 12, Font.BOLD);//使用字体
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Document document = new Document();
+        try {
+//            PdfWriter.getInstance(document, new FileOutputStream("aaa.pdf"));
+            PdfWriter instance = PdfWriter.getInstance(document, response.getOutputStream());
+            document.open();
+            Paragraph elements = new Paragraph("常州武进1区飞行报告", font2);
+            elements.setAlignment(Paragraph.ALIGN_CENTER);
+            document.add(elements);
+//            Image png = Image.getInstance("/Volumes/myproject/excel/pdf.jpeg");
+//            Image png = Image.getInstance("https://imgproxy.dev.platform.michaels.com/XXTpt9MjeIKtJwhEo-W6WCFk1c9-K_Ll4qb5g7o5vco/aHR0cHM6Ly9zdG9yYWdlLmdvb2dsZWFwaXMuY29tL2Ntcy1mZ20tZGV2MDAvNTM2MjgzMzM2NDIyNTc2MTI4MA.png");
+            Image png = Image.getInstance(b);
+            png.setAlignment(Image.ALIGN_CENTER);
+            document.add(png);
+            document.add(new Paragraph("任务编号：20190701        开始日期：20190701", font));
+//            document.add(new Paragraph("任务名称：常州武进1区     结束日期：20190701", font));
+//            document.add(new Paragraph("平均飞行高度：100m        平均飞行速度：100km/h", font));
+//            document.add(new Paragraph("任务面积：1000㎡      结束日期：20190701", font));
+//            document.add(new Paragraph("飞行总时长：1000㎡", font));
+            document.addCreationDate();
+            document.close();
+        } catch (Exception e) {
+            System.out.println("file create exception");
+        }
+
+
+    }
+
+
     public int threadHandleCount(int count){
         int handleCount = count / 8 + 1;
         return handleCount;
@@ -142,6 +247,7 @@ public class StudentServiceImpl implements StudentService {
         dataCount = 0;
         System.out.println(Thread.currentThread().getName()+"----------------"+Thread.currentThread().getId());
         XSSFWorkbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
+
         Sheet sheet = workbook.getSheetAt(0);
         int rowCount = sheet.getPhysicalNumberOfRows(); //获取总行数
         //第一行是表头，实际行数要减1

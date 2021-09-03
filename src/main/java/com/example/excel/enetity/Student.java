@@ -10,6 +10,8 @@ public class Student {
 
     private String company;
 
+    private String thumb;
+
     private Date date;
 
     public int getId() {
@@ -34,6 +36,14 @@ public class Student {
 
     public void setCompany(String company) {
         this.company = company;
+    }
+
+    public String getThumb() {
+        return thumb;
+    }
+
+    public void setThumb(String thumb) {
+        this.thumb = thumb;
     }
 
     public Date getDate() {

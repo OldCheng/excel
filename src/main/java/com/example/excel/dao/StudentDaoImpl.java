@@ -37,8 +37,8 @@ public class StudentDaoImpl implements StudentDao{
 
     @Override
     public int add(Student student) {
-        return jdbcTemplate.update("insert into student(name, company, date ) values(?, ?, ?)",
-                student.getName(), student.getCompany(), new Date());
+        return jdbcTemplate.update("insert into student(name, company, thumb, date ) values(?, ?, ?, ?)",
+                student.getName(), student.getCompany(),student.getThumb(), new Date());
     }
 
     @Override
