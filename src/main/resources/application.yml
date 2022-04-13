@@ -14,3 +14,8 @@ spring:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
+
+  ldap:
+    urls: ldap://isamldap.michaels.com
+    username: uid=jidong,ou=empl,ou=users,o=msi
+    password: Fff.1992
